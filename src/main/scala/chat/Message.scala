@@ -11,7 +11,7 @@ sealed abstract class Message extends Serializable:
 
   def ofJsonBody(jsonBody: String): Message
 
-  val toJsonBody: String
+  val toJsonBody: String = JSON.toJSONString(this)
 
 case class TextMessage(val text: String) extends Message:
   val messageType = Message.MESSAGE_TYPE_TEXT
@@ -19,9 +19,6 @@ case class TextMessage(val text: String) extends Message:
   override def ofJsonBody(jsonBody: String): Message =
     val text = JSON.parseObject(jsonBody).getString("text")
     TextMessage(text)
-
-  override val toJsonBody: String =
-    JSON.toJSONString(this)
 
 
 case class ImageMessage(val height: Int, val width: Int, origin: String, tiny: String) extends Message:
@@ -31,5 +28,3 @@ case class ImageMessage(val height: Int, val width: Int, origin: String, tiny: S
     val jsonObj = JSON.parseObject(jsonBody)
     ImageMessage(jsonObj.getIntValue("height"), jsonObj.getIntValue("width"),
       jsonObj.getString("origin"), jsonObj.getString("tiny"))
-
-  override val toJsonBody: String = JSON.toJSONString(this)
